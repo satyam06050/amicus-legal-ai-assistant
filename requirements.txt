@@ -1,0 +1,11 @@
+langgraph
+langchain-groq
+langchain-core
+chromadb
+sentence-transformers
+streamlit
+python-dotenv
+pymupdf
+ragas
+datasets
+torchvision

@@ -1,0 +1,126 @@
+SAMPLE EMPLOYMENT AGREEMENT
+
+This Employment Agreement ("Agreement") is entered into as of January 15, 2024 ("Effective Date"), by and between:
+
+TechCorp Solutions Private Limited, a company incorporated under the Companies Act, 2013, having its registered office at 456 Business Park, Mumbai, Maharashtra 400001 ("the Company" or "Employer")
+
+AND
+
+Rajesh Kumar Sharma, residing at 789 Residential Colony, Pune, Maharashtra 411001 ("the Employee")
+
+Clause 1. Position and Duties
+
+1.1 The Company hereby employs the Employee as a Senior Software Engineer. The Employee shall report to the Chief Technology Officer and shall perform such duties as are customarily associated with this position.
+
+1.2 The Employee agrees to devote their full business time and attention to the performance of their duties and to act in the best interests of the Company at all times.
+
+1.3 The Employee shall comply with all Company policies, procedures, and codes of conduct as may be amended from time to time.
+
+Clause 2. Compensation
+
+2.1 Base Salary: The Company shall pay the Employee a gross annual salary of INR 1,800,000 (Indian Rupees Eighteen Lakhs Only), payable in monthly installments of INR 150,000.
+
+2.2 The salary shall be subject to applicable tax deductions at source (TDS) and other statutory deductions as per Indian law.
+
+2.3 Performance Bonus: The Employee shall be eligible for an annual performance bonus of up to 15% of the base salary, subject to achievement of performance targets as determined by the management.
+
+Clause 3. Benefits and Perquisites
+
+3.1 The Employee shall be entitled to the following benefits:
+(a) Health insurance coverage for the Employee and their immediate family (spouse and two dependent children)
+(b) Provident Fund contributions as per applicable laws
+(c) Gratuity as per the Payment of Gratuity Act, 1972
+(d) 24 days of paid annual leave per year
+(e) 12 days of paid sick leave per year
+(f) Maternity leave as per the Maternity Benefit Act, 1961 (for female employees)
+
+3.2 The Company shall reimburse reasonable business expenses incurred by the Employee in the performance of their duties, subject to submission of proper documentation.
+
+Clause 4. Term and Termination
+
+4.1 This Agreement shall commence on the Effective Date and shall continue for an initial period of three (3) years, unless earlier terminated in accordance with this Clause.
+
+4.2 Termination by Company with Cause: The Company may terminate this Agreement immediately upon written notice if the Employee:
+(a) Commits a material breach of this Agreement
+(b) Is convicted of a criminal offense involving moral turpitude
+(c) Engages in fraud, embezzlement, or misappropriation of Company funds
+(d) Willfully fails to perform duties after written warning
+
+4.3 Termination by Company without Cause: The Company may terminate this Agreement without cause by providing ninety (90) days written notice or payment of salary in lieu thereof.
+
+4.4 Termination by Employee: The Employee may terminate this Agreement by providing sixty (60) days written notice to the Company.
+
+4.5 Severance Pay: Upon termination without cause by the Company, the Employee shall be entitled to severance pay equal to two (2) months of base salary for each completed year of service, subject to a maximum of twelve (12) months.
+
+Clause 5. Confidentiality and Non-Disclosure
+
+5.1 The Employee acknowledges that during employment, they will have access to confidential and proprietary information belonging to the Company.
+
+5.2 The Employee agrees not to disclose, use, or exploit any confidential information during or after employment, except as required in the performance of duties.
+
+5.3 This confidentiality obligation shall survive termination of this Agreement for a period of five (5) years.
+
+Clause 6. Intellectual Property
+
+6.1 All inventions, discoveries, developments, improvements, works of authorship, and trade secrets made or conceived by the Employee during the course of employment shall be the sole and exclusive property of the Company.
+
+6.2 The Employee agrees to execute all documents and take all actions necessary to assign and protect the Company's intellectual property rights.
+
+Clause 7. Non-Compete and Non-Solicitation
+
+7.1 During employment and for a period of twelve (12) months following termination, the Employee shall not engage in any business that directly competes with the Company within a radius of 50 kilometers from the Company's offices.
+
+7.2 The Employee shall not solicit or attempt to solicit any employees, clients, or customers of the Company for a period of twelve (12) months following termination.
+
+Clause 8. Dispute Resolution
+
+8.1 Any disputes arising out of or in connection with this Agreement shall be resolved through amicable negotiations between the parties.
+
+8.2 If the dispute cannot be resolved within thirty (30) days, it shall be referred to arbitration under the Arbitration and Conciliation Act, 1996.
+
+8.3 The arbitration shall be conducted by a single arbitrator appointed by mutual consent of both parties. The seat of arbitration shall be Mumbai, Maharashtra.
+
+8.4 The language of arbitration shall be English.
+
+Clause 9. Governing Law
+
+9.1 This Agreement shall be governed by and construed in accordance with the laws of India.
+
+9.2 The courts at Mumbai, Maharashtra shall have exclusive jurisdiction over any matters arising from this Agreement.
+
+Clause 10. Miscellaneous
+
+10.1 Entire Agreement: This Agreement constitutes the entire agreement between the parties and supersedes all prior negotiations, representations, warranties, commitments, offers, and agreements, whether written or oral.
+
+10.2 Amendment: This Agreement may only be amended or modified by a written instrument signed by both parties.
+
+10.3 Severability: If any provision of this Agreement is held to be invalid or unenforceable, the remaining provisions shall continue in full force and effect.
+
+10.4 Assignment: The Employee may not assign or transfer this Agreement or any rights or obligations hereunder without the prior written consent of the Company.
+
+10.5 Notices: All notices required or permitted under this Agreement shall be in writing and shall be deemed duly given when delivered personally or sent by registered mail to the addresses set forth above.
+
+IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.
+
+For TechCorp Solutions Private Limited:
+
+_____________________________
+Name: Priya Mehta
+Title: Chief Human Resources Officer
+Date: January 15, 2024
+
+Employee:
+
+_____________________________
+Name: Rajesh Kumar Sharma
+Date: January 15, 2024
+
+Witnesses:
+
+1. _____________________________
+   Name: Amit Patel
+   Date: January 15, 2024
+
+2. _____________________________
+   Name: Sneha Desai
+   Date: January 15, 2024
