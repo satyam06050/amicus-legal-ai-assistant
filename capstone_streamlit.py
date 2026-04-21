@@ -375,3 +375,4 @@ if prompt := st.chat_input("Ask about legal topics or your document..."):
                 answer = f"[Error: {str(e)}]"
 
     st.session_state.messages.append({"role":"assistant","content":answer})
+

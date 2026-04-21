@@ -71,3 +71,11 @@ SETUP.md
 
 # Generated files
 generate_notebook.py
+
+# CSS (embedded in app)
+brutalist.css
+
+# Deployment
+Procfile
+runtime.txt
+render.yaml
