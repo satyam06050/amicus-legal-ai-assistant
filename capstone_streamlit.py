@@ -1,4 +1,3 @@
-
 """
 capstone_streamlit.py — Legal Document Assistant
 Run: streamlit run capstone_streamlit.py
@@ -21,8 +20,160 @@ import fitz  # PyMuPDF
 load_dotenv()
 
 st.set_page_config(page_title="Legal Document Assistant", page_icon="⚖️", layout="wide")
+
+# ── UI styles ──────────────────────────────────────────────────────────────────
+# Scoped to [data-testid] selectors that match Streamlit ≥1.30.
+# Uses CSS custom properties so light/dark mode both work.
+# Avoids overriding the global font stack or Streamlit internals.
+st.markdown("""
+<style>
+  /* ── Accent palette (CSS vars, adapts to dark mode automatically) ── */
+  :root {
+    --la-ink:    #1a1a1a;
+    --la-paper:  #fffff8;
+    --la-rule:   #d4d0c8;
+    --la-accent: #2d4a8a;
+    --la-shadow: 3px 3px 0 var(--la-rule);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --la-ink:    #e8e4d8;
+      --la-paper:  #1c1c1c;
+      --la-rule:   #3a3a3a;
+      --la-accent: #6b8fd4;
+      --la-shadow: 3px 3px 0 #111;
+    }
+  }
+
+  /* ── App title ── */
+  [data-testid="stAppViewContainer"] h1 {
+    font-family: 'Georgia', 'Times New Roman', serif !important;
+    font-size: 1.75rem !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.02em;
+    border-bottom: 2px solid var(--la-ink);
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.25rem;
+  }
+
+  /* ── Section headings (sidebar) ── */
+  [data-testid="stSidebar"] h2,
+  [data-testid="stSidebar"] h3 {
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--la-accent) !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* ── Chat messages ── */
+  [data-testid="stChatMessage"] {
+    border: 1px solid var(--la-rule) !important;
+    border-radius: 6px !important;
+    margin-bottom: 0.75rem !important;
+    padding: 0.75rem !important;
+  }
+
+  /* ── User message accent ── */
+  [data-testid="stChatMessage"][data-testid*="user"] {
+    border-left: 3px solid var(--la-accent) !important;
+  }
+
+  /* ── Buttons ── */
+  [data-testid="stButton"] > button {
+    border: 1.5px solid var(--la-ink) !important;
+    border-radius: 4px !important;
+    font-weight: 600 !important;
+    font-size: 0.8rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: background 0.12s, transform 0.08s !important;
+    box-shadow: var(--la-shadow) !important;
+  }
+
+  [data-testid="stButton"] > button:hover {
+    background: var(--la-paper) !important;
+    transform: translate(1px, 1px) !important;
+    box-shadow: 1px 1px 0 var(--la-rule) !important;
+  }
+
+  [data-testid="stButton"] > button:active {
+    transform: translate(2px, 2px) !important;
+    box-shadow: none !important;
+  }
+
+  /* ── File uploader ── */
+  [data-testid="stFileUploader"] {
+    border: 1.5px dashed var(--la-rule) !important;
+    border-radius: 6px !important;
+    padding: 0.5rem !important;
+  }
+
+  /* ── Chat input ── */
+  [data-testid="stChatInput"] textarea {
+    border: 1.5px solid var(--la-rule) !important;
+    border-radius: 6px !important;
+    font-size: 0.95rem !important;
+  }
+
+  [data-testid="stChatInput"] textarea:focus {
+    border-color: var(--la-accent) !important;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--la-accent) 20%, transparent) !important;
+  }
+
+  /* ── Caption / source line ── */
+  [data-testid="stCaptionContainer"] {
+    font-size: 0.72rem !important;
+    opacity: 0.65;
+    margin-top: 0.25rem !important;
+  }
+
+  /* ── Sidebar topic bullets ── */
+  .la-topic-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0.75rem;
+  }
+
+  .la-topic-list li {
+    font-size: 0.8rem;
+    padding: 3px 0 3px 0.9rem;
+    position: relative;
+    line-height: 1.4;
+  }
+
+  .la-topic-list li::before {
+    content: "§";
+    position: absolute;
+    left: 0;
+    color: var(--la-accent);
+    font-size: 0.7rem;
+  }
+
+  /* ── Faithfulness badge ── */
+  .la-badge {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    vertical-align: middle;
+    margin-right: 4px;
+  }
+
+  .la-badge-high  { background: #d4edda; color: #1a5c2a; }
+  .la-badge-mid   { background: #fff3cd; color: #7a5500; }
+  .la-badge-low   { background: #f8d7da; color: #6b1c1c; }
+</style>
+""", unsafe_allow_html=True)
+
 st.title("⚖️ Legal Document Assistant")
-st.caption("AI-powered Q&A for legal documents and case law — answers questions faithfully from your documents and the legal knowledge base.")
+st.caption("AI-powered Q&A for legal documents — answers faithfully, never fabricates")
+
 
 # ── Load models and permanent KB (cached) ───────────────────────────
 @st.cache_resource
@@ -37,7 +188,6 @@ def load_agent():
     except: pass
     perm_collection = client.create_collection("permanent_kb")
 
-    # Copy all 10 legal documents here
     DOCUMENTS = [
         {"id": "doc_001", "topic": "Contract formation", "text": """A valid contract requires four essential elements: (1) Offer — one party proposes specific terms, (2) Acceptance — the other party agrees to those exact terms, (3) Consideration — something of value is exchanged by both parties, (4) Intention to create legal relations — both parties intend the agreement to be binding. The offeror can withdraw an offer before acceptance is communicated. Acceptance must be unconditional and match the offer exactly (mirror image rule). Consideration must be something of real value, though it need not be monetary. Both parties must have legal capacity (age, sanity) and the contract's purpose must be legal. Once all elements are present, the contract becomes binding and enforceable in court."""},
         {"id": "doc_002", "topic": "Breach of contract", "text": """A breach of contract occurs when one party fails to perform their obligations under a valid contract. There are three types: (1) Anticipatory breach — the party signals before performance is due that they won't perform, (2) Material breach — failure goes to the heart of the contract making it substantially unperformed, (3) Minor breach — non-critical obligation left unperformed. When a material breach occurs, the innocent party can either terminate the contract or continue and sue for damages. Damages are typically measured as the difference between contract price and market value (expectation damages). Some contracts include liquidated damages clauses that pre-set compensation amounts. The injured party must mitigate damages by taking reasonable steps to minimize loss. Specific performance may be ordered for unique goods or services that can't be replaced by money damages."""},
@@ -54,10 +204,10 @@ def load_agent():
     texts = [d["text"] for d in DOCUMENTS]
     embeddings = embedder.encode(texts).tolist()
     perm_collection.add(
-        documents=texts, 
+        documents=texts,
         embeddings=embeddings,
         ids=[d["id"] for d in DOCUMENTS],
-        metadatas=[{"topic":d["topic"]} for d in DOCUMENTS]
+        metadatas=[{"topic": d["topic"]} for d in DOCUMENTS]
     )
 
     # CapstoneState TypedDict
@@ -96,33 +246,29 @@ Recent conversation: {recent}
 Current question: {question}"""
         response = llm.invoke(prompt)
         decision = response.content.strip().lower()
-        if "memory" in decision:       decision = "memory_only"
-        elif "tool" in decision:       decision = "tool"
-        else:                          decision = "retrieve"
+        if "memory" in decision:   decision = "memory_only"
+        elif "tool" in decision:   decision = "tool"
+        else:                      decision = "retrieve"
         return {"route": decision}
 
     def retrieval_node(state: CapstoneState) -> dict:
         question = state["question"]
         q_emb = embedder.encode([question]).tolist()
 
-        # Query permanent KB
         results_perm = perm_collection.query(query_embeddings=q_emb, n_results=2)
-        chunks_perm = results_perm["documents"][0]
-        topics_perm = [m["topic"] for m in results_perm["metadatas"][0]]
+        chunks_perm  = results_perm["documents"][0]
+        topics_perm  = [m["topic"] for m in results_perm["metadatas"][0]]
 
-        # Query session KB if available
         context_parts = []
-        all_sources = []
+        all_sources   = []
 
-        for i, (chunk, topic) in enumerate(zip(chunks_perm, topics_perm)):
+        for chunk, topic in zip(chunks_perm, topics_perm):
             context_parts.append(f"[Legal KB: {topic}]\n{chunk}")
             all_sources.append(f"{topic} [Legal KB]")
 
-        # Check for session KB
         if st.session_state.get("session_kb") is not None:
             results_sess = st.session_state.session_kb.query(query_embeddings=q_emb, n_results=2)
-            chunks_sess = results_sess["documents"][0]
-            for chunk in chunks_sess:
+            for chunk in results_sess["documents"][0]:
                 context_parts.append(f"[Uploaded Doc]\n{chunk}")
                 all_sources.append("[Uploaded Doc]")
 
@@ -141,21 +287,19 @@ Current question: {question}"""
         return {"tool_result": tool_result}
 
     def answer_node(state: CapstoneState) -> dict:
-        question    = state["question"]
-        retrieved   = state.get("retrieved", "")
-        tool_result = state.get("tool_result", "")
-        messages    = state.get("messages", [])
-        eval_retries= state.get("eval_retries", 0)
+        question     = state["question"]
+        retrieved    = state.get("retrieved", "")
+        tool_result  = state.get("tool_result", "")
+        messages     = state.get("messages", [])
+        eval_retries = state.get("eval_retries", 0)
 
         context_parts = []
-        if retrieved:
-            context_parts.append(f"KNOWLEDGE BASE:\n{retrieved}")
-        if tool_result:
-            context_parts.append(f"TOOL RESULT:\n{tool_result}")
+        if retrieved:    context_parts.append(f"KNOWLEDGE BASE:\n{retrieved}")
+        if tool_result:  context_parts.append(f"TOOL RESULT:\n{tool_result}")
         context = "\n\n".join(context_parts)
 
         if context:
-            system_content = """You are a legal research assistant. 
+            system_content = """You are a legal research assistant.
 PRIMARY SOURCE: Use [Uploaded Doc] chunks first — these are the user's actual case documents.
 SECONDARY SOURCE: Use [Legal KB] chunks for definitions and procedure only.
 RULE: If neither source contains the answer, say exactly:
@@ -165,7 +309,7 @@ NEVER fabricate case names, statutes, sections, dates, or monetary figures.
 """ + context
         else:
             system_content = """You are a legal research assistant. Answer based on the conversation history.
-RULE: If you don't know the answer, say: "I could not find that in the available documents. Please consult a qualified lawyer." 
+RULE: If you don't know the answer, say: "I could not find that in the available documents. Please consult a qualified lawyer."
 NEVER fabricate case names, statutes, sections, dates, or monetary figures."""
 
         if eval_retries > 0:
@@ -173,17 +317,19 @@ NEVER fabricate case names, statutes, sections, dates, or monetary figures."""
 
         lc_msgs = [SystemMessage(content=system_content)]
         for msg in messages[:-1]:
-            lc_msgs.append(HumanMessage(content=msg["content"]) if msg["role"] == "user"
-                           else AIMessage(content=msg["content"]))
+            lc_msgs.append(
+                HumanMessage(content=msg["content"]) if msg["role"] == "user"
+                else AIMessage(content=msg["content"])
+            )
         lc_msgs.append(HumanMessage(content=question))
 
         response = llm.invoke(lc_msgs)
         return {"answer": response.content}
 
     def eval_node(state: CapstoneState) -> dict:
-        answer   = state.get("answer", "")
-        context  = state.get("retrieved", "")[:500]
-        retries  = state.get("eval_retries", 0)
+        answer  = state.get("answer", "")
+        context = state.get("retrieved", "")[:500]
+        retries = state.get("eval_retries", 0)
 
         if not context:
             return {"faithfulness": 1.0, "eval_retries": retries + 1}
@@ -226,22 +372,25 @@ Answer: {answer[:300]}"""
         return "answer"
 
     graph = StateGraph(CapstoneState)
-    graph.add_node("memory",    memory_node)
-    graph.add_node("router",    router_node)
-    graph.add_node("retrieve",  retrieval_node)
-    graph.add_node("skip",      skip_retrieval_node)
-    graph.add_node("tool",      tool_node)
-    graph.add_node("answer",    answer_node)
-    graph.add_node("eval",      eval_node)
-    graph.add_node("save",      save_node)
+    graph.add_node("memory",   memory_node)
+    graph.add_node("router",   router_node)
+    graph.add_node("retrieve", retrieval_node)
+    graph.add_node("skip",     skip_retrieval_node)
+    graph.add_node("tool",     tool_node)
+    graph.add_node("answer",   answer_node)
+    graph.add_node("eval",     eval_node)
+    graph.add_node("save",     save_node)
 
     graph.set_entry_point("memory")
-    graph.add_edge("memory",   "router")
-    graph.add_conditional_edges("router", route_decision, {"retrieve": "retrieve", "skip": "skip", "tool": "tool"})
+    graph.add_edge("memory", "router")
+    graph.add_conditional_edges(
+        "router", route_decision,
+        {"retrieve": "retrieve", "skip": "skip", "tool": "tool"}
+    )
     graph.add_edge("retrieve", "answer")
     graph.add_edge("skip",     "answer")
     graph.add_edge("tool",     "answer")
-    graph.add_edge("answer", "eval")
+    graph.add_edge("answer",   "eval")
     graph.add_conditional_edges("eval", eval_decision, {"answer": "answer", "save": "save"})
     graph.add_edge("save", END)
 
@@ -253,57 +402,55 @@ Answer: {answer[:300]}"""
 
 try:
     agent_app, embedder, perm_collection = load_agent()
-    st.success(f"✅ Legal KB loaded — {perm_collection.count()} documents")
+    st.success(f"✅ Legal KB loaded — {perm_collection.count()} documents indexed")
 except Exception as e:
     st.error(f"Failed to load agent: {e}")
     st.stop()
 
-# ── Session state ─────────────────────────────────────────
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-if "thread_id" not in st.session_state:
-    st.session_state.thread_id = str(uuid.uuid4())[:8]
-if "session_kb" not in st.session_state:
-    st.session_state.session_kb = None
-if "doc_loaded" not in st.session_state:
-    st.session_state.doc_loaded = False
+# ── Session state ─────────────────────────────────────────────────────────────
+if "messages"   not in st.session_state: st.session_state.messages   = []
+if "thread_id"  not in st.session_state: st.session_state.thread_id  = str(uuid.uuid4())[:8]
+if "session_kb" not in st.session_state: st.session_state.session_kb = None
+if "doc_loaded" not in st.session_state: st.session_state.doc_loaded = False
 
-# ── Sidebar ───────────────────────────────────────────────
+# ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.header("⚖️ Knowledge Base")
+    st.header("Knowledge Base")
 
-    st.subheader("Legal Knowledge Base")
-    st.write("**Topics covered:**")
-    legal_topics = ["Contract formation", "Breach of contract", "Tort law", "Evidence", 
-                    "Civil procedure", "Criminal procedure", "Intellectual property", 
-                    "Employment law", "Property law", "Case citation"]
-    for t in legal_topics:
-        st.write(f"• {t}")
+    st.subheader("Legal topics covered")
+    legal_topics = [
+        "Contract formation", "Breach of contract", "Tort law", "Evidence",
+        "Civil procedure",    "Criminal procedure", "Intellectual property",
+        "Employment law",     "Property law",        "Case citation",
+    ]
+    # Render as custom HTML list for the § bullets
+    items_html = "".join(f"<li>{t}</li>" for t in legal_topics)
+    st.markdown(f'<ul class="la-topic-list">{items_html}</ul>', unsafe_allow_html=True)
 
     st.divider()
-    st.subheader("Your Document")
+    st.subheader("Your document")
 
-    uploaded_file = st.file_uploader("Upload a legal document (PDF or TXT):", type=["pdf", "txt"])
+    uploaded_file = st.file_uploader(
+        "Upload a legal document (PDF or TXT):",
+        type=["pdf", "txt"],
+        label_visibility="collapsed",
+    )
 
     if uploaded_file is not None:
         try:
             if uploaded_file.type == "application/pdf":
                 pdf_doc = fitz.open(stream=uploaded_file.read(), filetype="pdf")
-                text = ""
-                for page_num in range(len(pdf_doc)):
-                    page = pdf_doc[page_num]; text += page.get_text(); text += "\n\n"
-            else:  # txt
+                text = "\n\n".join(page.get_text() for page in pdf_doc)
+            else:
                 text = uploaded_file.read().decode("utf-8")
 
-            # Chunk into 300-word sliding windows with 50-word overlap
             words = text.split()
-            chunks = []
-            for i in range(0, len(words), 250):  # 300-word chunks with 50-word overlap
-                chunk = " ".join(words[i:i+300])
-                if len(chunk.split()) > 50:
-                    chunks.append(chunk)
+            chunks = [
+                " ".join(words[i:i + 300])
+                for i in range(0, len(words), 250)
+                if len(words[i:i + 300]) > 50
+            ]
 
-            # Build session KB
             client = chromadb.Client()
             try: client.delete_collection("session_kb")
             except: pass
@@ -314,65 +461,83 @@ with st.sidebar:
                 documents=chunks,
                 embeddings=embeddings,
                 ids=[f"chunk_{i}" for i in range(len(chunks))],
-                metadatas=[{"source": uploaded_file.name} for _ in chunks]
+                metadatas=[{"source": uploaded_file.name} for _ in chunks],
             )
 
             st.session_state.session_kb = session_collection
             st.session_state.doc_loaded = True
-            st.success(f"✅ Document loaded: {len(chunks)} chunks from {uploaded_file.name}")
+            st.success(f"✅ {uploaded_file.name} — {len(chunks)} chunks indexed")
 
         except Exception as e:
             st.error(f"Error processing file: {e}")
 
-    if st.session_state.doc_loaded and st.button("🗑️ Clear Document"):
-        st.session_state.session_kb = None
-        st.session_state.doc_loaded = False
-        st.session_state.messages = []
-        st.session_state.thread_id = str(uuid.uuid4())[:8]
-        st.rerun()
-
-    if not st.session_state.doc_loaded:
-        st.info("No document uploaded — answers use Legal KB only")
+    if st.session_state.doc_loaded:
+        if st.button("🗑 Clear document", use_container_width=True):
+            st.session_state.session_kb = None
+            st.session_state.doc_loaded = False
+            st.session_state.messages   = []
+            st.session_state.thread_id  = str(uuid.uuid4())[:8]
+            st.rerun()
+    else:
+        st.info("No document uploaded — answers use the Legal KB only.")
 
     st.divider()
-    if st.button("🔄 New conversation"):
-        st.session_state.messages = []
+
+    if st.button("↺ New conversation", use_container_width=True):
+        st.session_state.messages  = []
         st.session_state.thread_id = str(uuid.uuid4())[:8]
         st.rerun()
-    st.caption(f"Session: {st.session_state.thread_id}")
 
-# ── Display history ───────────────────────────────────────
+    st.caption(f"Session: `{st.session_state.thread_id}`")
+
+
+# ── Helper: faithfulness badge ────────────────────────────────────────────────
+def faith_badge(score: float) -> str:
+    if score >= 0.8:
+        cls, label = "la-badge-high", "high"
+    elif score >= 0.6:
+        cls, label = "la-badge-mid",  "medium"
+    else:
+        cls, label = "la-badge-low",  "low"
+    return f'<span class="la-badge {cls}">faithfulness: {label} ({score:.2f})</span>'
+
+
+# ── Display conversation history ──────────────────────────────────────────────
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.write(msg["content"])
 
-# ── Chat input ────────────────────────────────────────────
-if prompt := st.chat_input("Ask about legal topics or your document..."):
+
+# ── Chat input ────────────────────────────────────────────────────────────────
+if prompt := st.chat_input("Ask about legal topics or your document…"):
     with st.chat_message("user"):
         st.write(prompt)
-    st.session_state.messages.append({"role":"user","content":prompt})
+    st.session_state.messages.append({"role": "user", "content": prompt})
 
     with st.chat_message("assistant"):
-        with st.spinner("Thinking..."):
+        with st.spinner("Thinking…"):
             try:
                 config = {"configurable": {"thread_id": st.session_state.thread_id}}
                 result = agent_app.invoke({"question": prompt}, config=config)
-                answer = result.get("answer", "Sorry, I could not generate an answer.")
-                faith = result.get("faithfulness", 0.0)
-                sources = result.get("sources", [])
+
+                answer  = result.get("answer",      "Sorry, I could not generate an answer.")
+                faith   = result.get("faithfulness", 0.0)
+                sources = result.get("sources",      [])
 
                 st.write(answer)
 
-                # Show sources and faithfulness
                 source_str = ", ".join(sources[:3]) if sources else "general legal KB"
-                st.caption(f"Faithfulness: {faith:.2f} | Sources: {source_str}")
+                badge_html = faith_badge(faith)
+                st.markdown(
+                    f"{badge_html} &nbsp; Sources: {source_str}",
+                    unsafe_allow_html=True,
+                )
 
                 if not st.session_state.doc_loaded:
-                    st.caption("*This answer is from the general legal knowledge base.*")
+                    st.caption("Answers drawn from the general legal knowledge base.")
 
             except Exception as e:
                 st.error(f"Error: {e}")
                 answer = f"[Error: {str(e)}]"
 
-    st.session_state.messages.append({"role":"assistant","content":answer})
-
+    st.session_state.messages.append({"role": "assistant", "content": answer})
